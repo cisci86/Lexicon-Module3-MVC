@@ -1,14 +1,33 @@
 ﻿@model IEnumerable<Exercise_15.Models.Entities.GymClass>
+@using Exercise_15.Models.Entities
+@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Gym Classes";
 }
 
-<h1>Index</h1>
-
+<h1>Gym Classes</h1>
+@if (!SignInManager.IsSignedIn(User))
+{
+    <div class="alert alert-info" id="signInMessage">
+        <i class="fas fa-check-circle pe-1"></i>Sign in to book or cancel classes!
+    </div>
+}
+@if (SignInManager.IsSignedIn(User))
+{
 <p>
     <a asp-action="Create">Create New</a>
-</p>
+</p>    
+}
+@if (TempData["message"] != null)
+{
+    <div class="alert alert-success" id="message">
+        <i class="fas fa-check-circle pe-1"></i>@TempData["Message"]
+    </div>
+}
 <table class="table">
     <thead>
         <tr>
@@ -42,11 +61,15 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
+            @if(SignInManager.IsSignedIn(User))
+                {
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
+                    <a asp-action="BookingToogle" asp-route-id="@item.Id">Book / Cancel booking</a>
+                </td>
+                }
         </tr>
 }
     </tbody>

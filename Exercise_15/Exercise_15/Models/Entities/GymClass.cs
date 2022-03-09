@@ -1,4 +1,5 @@
-﻿namespace Exercise_15.Models.Entities
+﻿# nullable disable
+namespace Exercise_15.Models.Entities
 {
     public class GymClass
     {
@@ -9,6 +10,6 @@
         public DateTime EndTime { get { return StartTime + Duration; } }
         public string Description { get; set; }
 
-        ICollection<ApplicationUserGymClass> AttendingMembers { get; set; }
+        public ICollection<ApplicationUserGymClass> AttendingMembers { get; set; }
     }
 }

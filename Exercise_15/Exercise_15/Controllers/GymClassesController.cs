@@ -1,26 +1,28 @@
 ﻿#nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Exercise_15.Data;
 using Exercise_15.Models.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Exercise_15.Controllers
 {
+    [Authorize]
     public class GymClassesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> userManager;
 
-        public GymClassesController(ApplicationDbContext context)
+        public GymClassesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            this.userManager = userManager;
+
         }
 
         // GET: GymClasses
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             return View(await _context.GymClasses.ToListAsync());
@@ -149,6 +151,31 @@ namespace Exercise_15.Controllers
         private bool GymClassExists(int id)
         {
             return _context.GymClasses.Any(e => e.Id == id);
+        }
+        public async Task<IActionResult> BookingToogle(int? id)
+        {
+            if (id == null) return NotFound();
+            var userId = userManager.GetUserId(User);
+            var attending = _context.UserGymClasses.Find(userId, id);
+            if (attending == null)
+            {
+                var newAttending = new ApplicationUserGymClass
+                {
+                    ApplicationUserId = userId,
+                    GymClassId = (int)id
+                };
+                _context.Add(newAttending);
+                TempData["Message"] = $"You are now booked on the {_context.GymClasses.Find(id).Name} class";
+            }
+
+            else
+            {
+                _context.Remove(attending);
+                TempData["Warning"] = "The class in now unbooked";
+            }
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+
         }
     }
 }

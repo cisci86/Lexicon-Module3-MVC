@@ -12,6 +12,7 @@ namespace Exercise_15.Data
         {
         }
         public DbSet<GymClass> GymClasses { get; set; }
+        public DbSet<ApplicationUserGymClass> UserGymClasses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelbuilder)
         {
