@@ -4,6 +4,6 @@ namespace Exercise_15.Models.Entities
 {
     public class ApplicationUser : IdentityUser
     {
-        ICollection<ApplicationUserGymClass> GymClasses { get; set; }
+        ICollection<ApplicationUserGymClass> AttendingClasses { get; set; }
     }
 }
