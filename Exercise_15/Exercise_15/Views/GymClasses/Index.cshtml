@@ -28,6 +28,12 @@
         <i class="fas fa-check-circle pe-1"></i>@TempData["Message"]
     </div>
 }
+@if (TempData["warning"] != null)
+{
+    <div class="alert alert-warning" id="message">
+        <i class="fas fa-check-circle pe-1"></i>@TempData["Warning"]
+    </div>
+}
 <table class="table">
     <thead>
         <tr>
@@ -64,11 +70,18 @@
             @if(SignInManager.IsSignedIn(User))
                 {
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
-                    <a asp-action="BookingToogle" asp-route-id="@item.Id">Book / Cancel booking</a>
-                </td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a><span>|</span>
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> <span>|</span>
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> <span>|</span>
+                    @if(item.AttendingMembers.FirstOrDefault(m => m.ApplicationUserId == UserManager.GetUserId(User)) == null)
+                    {
+                    <a asp-action="BookingToogle" asp-route-id="@item.Id">Book</a>         
+                    }       
+                    else
+                    {
+                    <a asp-action="BookingToogle" asp-route-id="@item.Id">Cancel Book</a>         
+                    }      
+                    </td>
                 }
         </tr>
 }

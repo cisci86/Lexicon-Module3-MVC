@@ -25,7 +25,7 @@ namespace Exercise_15.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.GymClasses.ToListAsync());
+            return View(await _context.GymClasses.Include(g => g.AttendingMembers).ToListAsync());
         }
 
         // GET: GymClasses/Details/5
@@ -36,8 +36,9 @@ namespace Exercise_15.Controllers
                 return NotFound();
             }
 
-            var gymClass = await _context.GymClasses
+            var gymClass = await _context.GymClasses.Include(g => g.AttendingMembers).ThenInclude(m => m.ApplicationUser)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (gymClass == null)
             {
                 return NotFound();
@@ -171,7 +172,7 @@ namespace Exercise_15.Controllers
             else
             {
                 _context.Remove(attending);
-                TempData["Warning"] = "The class in now unbooked";
+                TempData["Warning"] = $"The spot on the {_context.GymClasses.Find(id).Name} class in now canceled";
             }
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
