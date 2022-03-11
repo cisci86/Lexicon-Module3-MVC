@@ -1,4 +1,5 @@
 using Exercise_15.Data;
+using Exercise_15.Extensions;
 using Exercise_15.Models.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,8 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+app.SeedDataAsync().GetAwaiter().GetResult();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -1,5 +1,6 @@
 ﻿#nullable disable
 using Exercise_15.Data;
+using Exercise_15.Helper;
 using Exercise_15.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -58,6 +59,7 @@ namespace Exercise_15.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("Id,Name,StartTime,Duration,Description")] GymClass gymClass)
         {
             if (ModelState.IsValid)
@@ -70,6 +72,7 @@ namespace Exercise_15.Controllers
         }
 
         // GET: GymClasses/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -90,6 +93,7 @@ namespace Exercise_15.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,StartTime,Duration,Description")] GymClass gymClass)
         {
             if (id != gymClass.Id)
@@ -121,6 +125,7 @@ namespace Exercise_15.Controllers
         }
 
         // GET: GymClasses/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

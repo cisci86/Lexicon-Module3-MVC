@@ -1,4 +1,5 @@
-﻿using Exercise_15.Models.Entities;
+﻿using Exercise_15.Helper;
+using Exercise_15.Models.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,7 @@ namespace Exercise_15.Data
         {
             base.OnModelCreating(modelbuilder);
             modelbuilder.Entity<ApplicationUserGymClass>().HasKey(a => new { a.ApplicationUserId, a.GymClassId });
+            modelbuilder.Entity<ApplicationUser>().Property<DateTime>(PropertyHelper.GetTimeOfRegistration());
         }
     }
 }

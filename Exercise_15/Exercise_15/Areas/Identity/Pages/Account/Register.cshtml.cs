@@ -2,23 +2,18 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Exercise_15.Models.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;
+using Exercise_15.Data;
+using Exercise_15.Helper;
 
 namespace Exercise_15.Areas.Identity.Pages.Account
 {
@@ -30,13 +25,15 @@ namespace Exercise_15.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly ApplicationDbContext _context;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -44,6 +41,7 @@ namespace Exercise_15.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _context = context;
         }
 
         /// <summary>
@@ -71,6 +69,8 @@ namespace Exercise_15.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -98,6 +98,7 @@ namespace Exercise_15.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
         }
 
 
@@ -114,11 +115,15 @@ namespace Exercise_15.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
-
+                user.Firstname = Input.FirstName;
+                user.Lastname = Input.LastName;
+                _context.Entry(user).Property(PropertyHelper.GetTimeOfRegistration()).CurrentValue = DateTime.Now;
+                
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
-
+                
+                
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
