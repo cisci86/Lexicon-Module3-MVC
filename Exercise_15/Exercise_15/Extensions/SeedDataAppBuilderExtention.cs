@@ -14,8 +14,8 @@ namespace Exercise_15.Extensions
                 var config = provider.GetRequiredService<IConfiguration>();
                 var service = provider.GetRequiredService<IServiceProvider>();
                 var adminPW = config["AdminPW"];
-                _context.Database.EnsureDeleted();
-                _context.Database.Migrate();
+                //_context.Database.EnsureDeleted();
+                //_context.Database.Migrate();
                 try
                 {
                     await SeedData.Start(_context, service, adminPW);
